@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<!--
+    Generator: krTracker-v20210329
+    MINIFIER: 
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>krTracker</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          crossorigin="" />
+
+    <link href="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.css" 
+        type="text/css" rel="stylesheet" />
+
+    <style>
+        h1, h2, h3 {
+            font-family: sans-serif;
+        }
+
+        p {
+            font-family: sans-serif;
+        }
+
+        html, body{
+            height: 100%;
+            width: 100%;
+        }
+
+        #mapContainer { width: 100%; height:100%; position: fixed;}
+        #map { width: 100%; height:100%; position: relative;}
+
+        .chart {
+            height: 400px;
+        }
+
+        /* FROM: https://www.w3schools.com/howto/howto_js_tabs.asp */
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        } 
+    </style>
+</head>
+<body>
+
+    <h1>KriolOS :: krTracker <a href="tracks.html">Tracks</a> </h1>
+    
+    <hr>
+     <!-- Tab links -->
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'detail')">Detail</button>
+        <button class="tablinks" onclick="openTab(event, 'mapContainer')">Map</button>
+        <button class="tablinks" onclick="openTab(event, 'altitude')">Altitude</button>
+        <button class="tablinks" onclick="openTab(event, 'groundSpeed')">Ground Speed</button>
+    </div>
+
+    <div id="detail" class="tabcontent">
+        <h3 id="track-name"></h3>
+        <p>Total distance: <span id="totalDistance"></span> km (<span id="totalDistanceNM"></span> NM)</p>
+        <p>GPX Download: <a id="gpxDownload"></a></p>
+    </div>
+
+
+    <div id="mapContainer">
+        <div id="map"></div>
+    </div>
+
+
+    <div id="altitude" class="tabcontent chart" ></div>
+
+    <div id="groundSpeed" class="tabcontent chart" ></div>
+
+
+    <script src="js/lib/gpx-parser.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            crossorigin=""></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+
+    <script src="//code.jquery.com/jquery-latest.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <script>
+        let mymap = L.map('map');
+
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 50
+        });
+        osm.addTo(mymap);
+
+        function drawTrack(track) {
+            let coordinates = track.points.map(p => [p.lat.toFixed(5), p.lon.toFixed(5)]);
+
+            var polyline = L.polyline(coordinates, { weight: 6, color: 'darkred' }).addTo(mymap);
+
+            // zoom the map to the polyline
+            mymap.fitBounds(polyline.getBounds());
+        }
+
+        function createLGFromWpt(wpt, imagePath) {
+            //let markers = wpt.map(p => L.marker([p.lat.toFixed(5), p.lon.toFixed(5)]).bindPopup(`<a href="${imagePath}/${p.link.href}" data-featherlight="image">Open image</a>` ));
+
+            /*
+            let markers = wpt.map(p => 
+                L.marker([p.lat.toFixed(5), p.lon.toFixed(5)]).bindPopup(
+                    `<img src="${imagePath}/${p.link.href}" style="width:auto; max-width:400px;max-height:400px;" />
+                    <br/> Name: ${p.name} <br/> desc: ${p.ele}`));
+            */
+
+
+            let markers = wpt.map(p => L.marker([p.lat.toFixed(5), p.lon.toFixed(5)]).on('click', function(e) {markerOnClick(`${imagePath}/${p.link.href}`)} ));
+            
+            //Cluster 
+            //var mcg = L.markerClusterGroup().addTo(mymap);
+            //mcg.addLayers(markers);
+
+            //Group for control
+            var images = L.layerGroup(markers);
+            
+
+            var basemaps = {
+              "OSM Mapnik": osm,
+              //"OSM Stamen Toner": stamen
+            };
+
+            var overlays = {
+              "Images": images
+            };
+
+            mymap.addLayer(images);
+
+            L.control.layers(basemaps, overlays).addTo(mymap);
+        }
+
+        function markerOnClick(imageUrl){
+            var $content = `<img src="${imageUrl}" style="width:auto; max-width:680px;max-height:480px;" />`;
+            $.featherlight($content);
+        }
+
+        // function to create a layer switcher control
+        function createLayerSwitcher() {
+            // define basemap and thematic layers and add layer switcher control
+           var basemaps = {
+              "OSM Mapnik": osm,
+              //"OSM Stamen Toner": stamen
+            };
+
+            var overlays = {
+              "Images": images
+            };
+            L.control.layers(basemaps,overlays).addTo(map);
+          }
+
+        L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.')
+    </script>
+
+    <script>
+        var url_string = window.location.href
+        var url = new URL(url_string);
+        var trackPath = url.searchParams.get("track");
+
+        var imagePathIndex = trackPath.lastIndexOf("/");
+        var imagePath = trackPath.substring(0, imagePathIndex)
+
+        fetch(trackPath)
+            .then(function (response) {
+                return response.text();
+            }).then(function (gpxData) {
+                let gpx = new gpxParser();
+                gpx.parse(gpxData);
+
+                document.getElementById("track-name").innerText = gpx.tracks[0].name;
+
+                document.getElementById("totalDistance").innerText = (gpx.tracks[0].distance.total / 1000).toFixed(3);
+                document.getElementById("totalDistanceNM").innerText = (gpx.tracks[0].distance.total / 1000 * 0.539956803).toFixed(3);
+
+                document.getElementById("gpxDownload").innerText = trackPath;
+                document.getElementById("gpxDownload").setAttribute("href", trackPath);
+
+                drawTrack(gpx.tracks[0]);
+                createLGFromWpt(gpx.waypoints, imagePath);
+                drawAltitudeChart(gpx.tracks[0]);
+                drawGroundSpeedChart(getGroundSpeedData(gpx.tracks[0]));
+            });
+    </script>
+
+    <script>
+        /**
+         * Returns an array of time - ground speed for each track point (that has a time value).
+         *
+         * @param track
+         */
+        function getGroundSpeedData(track) {
+            let result = [];
+
+            let gpx = new gpxParser();
+
+            let points = track.points.filter(p => p.time !== null);
+
+            let previousPoint = null;
+
+            for (let i = 0; i < points.length; i++) {
+                let point = points[i];
+
+                if (previousPoint) {
+                    // in seconds
+                    let time = Math.abs(point.time - previousPoint.time) / 1000;
+
+                    if (time < 5) { continue; }
+
+                    // in nm (nautical miles)
+                    let distance = gpx.calcDistanceBetween(previousPoint, point) * (0.539957);
+
+                    let speedInKmPerHour = ((distance / time) * 3600) / 1000;
+
+                    result.push([point.time.getTime(), speedInKmPerHour]);
+                }
+
+                previousPoint = point;
+            }
+
+            return result;
+        }
+
+        function drawAltitudeChart(track) {
+
+            let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele * 3.28084]);
+
+            console.log(dataPoints);
+            Highcharts.chart('altitude', {
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'Altitude (ft)'
+                },
+                subtitle: {
+                    text: 'Altitude en route'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Altitude (ft)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} ft'
+                },
+
+                plotOptions: {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+
+                colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+
+                series: [{
+                    name: "Altitude (ft)",
+                    data: dataPoints
+                }],
+
+                time: { useUTC: false }
+            });
+        };
+
+        function drawGroundSpeedChart(dataPoints) {
+            console.log(dataPoints);
+
+            Highcharts.chart('groundSpeed', {
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'Ground speed (kts)'
+                },
+                subtitle: {
+                    text: 'Ground speed'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Ground speed (kts)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} kts'
+                },
+
+                plotOptions: {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+
+                colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+
+                series: [{
+                    name: "Ground speed (kts)",
+                    data: dataPoints
+                }],
+
+                time: { useUTC: false }
+            });
+        };
+    </script>
+
+    <script>
+        //FROM: https://www.w3schools.com/howto/howto_js_tabs.asp
+        function openTab(evt, cityName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        } 
+    </script>
+</body>
+
+</html>

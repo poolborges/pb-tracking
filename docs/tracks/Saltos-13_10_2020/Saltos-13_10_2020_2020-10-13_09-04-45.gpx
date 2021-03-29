@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="OSMTracker for Android™ - https://github.com/labexp/osmtracker-android" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd ">
+	<metadata>
+		<name>Saltos-13/10/2020</name>
+		<keywords>osmtracker</keywords>
+	</metadata>
+	<trk>
+		<name><![CDATA[Registado com o OSMTracker para Android™]]></name>
+		<trkseg>
+			<trkpt lat="15.16451361" lon="-23.57827239">
+				<ele>135.6856689453125</ele>
+				<time>2020-10-13T10:04:53Z</time>
+				<extensions>
+					<speed>7.150000095367432</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16446151" lon="-23.57835741">
+				<ele>123.77581787109375</ele>
+				<time>2020-10-13T10:04:54Z</time>
+				<extensions>
+					<speed>6.599999904632568</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16443293" lon="-23.57841023">
+				<ele>117.89483642578125</ele>
+				<time>2020-10-13T10:04:55Z</time>
+				<extensions>
+					<speed>5.380000114440918</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16441808" lon="-23.5784483">
+				<ele>119.92938232421875</ele>
+				<time>2020-10-13T10:04:56Z</time>
+				<extensions>
+					<speed>4.900000095367432</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16439913" lon="-23.57851923">
+				<ele>109.89215087890625</ele>
+				<time>2020-10-13T10:04:57Z</time>
+				<extensions>
+					<speed>6.090000152587891</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16437701" lon="-23.57858485">
+				<ele>106.2408447265625</ele>
+				<time>2020-10-13T10:04:58Z</time>
+				<extensions>
+					<speed>7.889999866485596</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16433072" lon="-23.57866528">
+				<ele>109.7152099609375</ele>
+				<time>2020-10-13T10:04:59Z</time>
+				<extensions>
+					<speed>10.050000190734863</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16430351" lon="-23.57875949">
+				<ele>103.71380615234375</ele>
+				<time>2020-10-13T10:05:00Z</time>
+				<extensions>
+					<speed>10.989999771118164</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.1642288" lon="-23.57885626">
+				<ele>103.5699462890625</ele>
+				<time>2020-10-13T10:05:01Z</time>
+				<extensions>
+					<speed>11.760000228881836</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16418999" lon="-23.57895511">
+				<ele>106.80267333984375</ele>
+				<time>2020-10-13T10:05:02Z</time>
+				<extensions>
+					<speed>11.859999656677246</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16413959" lon="-23.57906804">
+				<ele>108.501953125</ele>
+				<time>2020-10-13T10:05:03Z</time>
+				<extensions>
+					<speed>12.510000228881836</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16409871" lon="-23.57918471">
+				<ele>108.025390625</ele>
+				<time>2020-10-13T10:05:04Z</time>
+				<extensions>
+					<speed>13.119999885559082</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16405807" lon="-23.57930294">
+				<ele>109.41729736328125</ele>
+				<time>2020-10-13T10:05:05Z</time>
+				<extensions>
+					<speed>13.5</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16402746" lon="-23.57942708">
+				<ele>110.3026123046875</ele>
+				<time>2020-10-13T10:05:06Z</time>
+				<extensions>
+					<speed>14.229999542236328</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16401254" lon="-23.57955518">
+				<ele>109.24969482421875</ele>
+				<time>2020-10-13T10:05:07Z</time>
+				<extensions>
+					<speed>14.210000038146973</speed>
+				</extensions>
+			</trkpt>
+			<trkpt lat="15.16399313" lon="-23.57968708">
+				<ele>108.7493896484375</ele>
+				<time>2020-10-13T10:05:08Z</time>
+				<extensions>
+					<speed>14.880000114440918</speed>
+				</extensions>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>

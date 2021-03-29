@@ -1,0 +1,69 @@
+// Global settings
+:ascii-ids:
+:encoding: UTF-8
+:lang: pt_PT
+:icons: font
+:toc:
+:toc-placement!:
+:toclevels: 3
+:numbered:
+:stem:
+
+ifdef::env-github[]
+:imagesdir: https://raw.githubusercontent.com/poolborges/pb-tracking/master/docs/images/
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+[[doc]]
+= krTracking - Paulo Borges Tracking
+:author: Copyright (c) 2020-2020 Paulo Borges.
+:revnumber: pb-tracking-0.0.1-snapshot
+:revdate: {last-update-label} {docdatetime}
+:version-label!:
+
+= pb-tracking
+
+View online: https://poolborges.github.io/pb-tracking
+
+== Screenshots 
+
+image::krtracker-screenshot.gif[]
+
+== Todo 
+
+* Compress Image (Resize)
+* Compress GPX file (Minifier)
+
+
+.Resize image (macOS)
+[source, bach]
+----
+sips -Z 640 *.jpg
+----
+
+.Resize image with imagemagick
+[source, bach]
+----
+$ brew install imagemagick
+$ convert foo.jpg -resize 50% bar.jpg
+$ mogrify -resize 50% *
+$ magick mogrify -resize 50% *
+----
+
+
+== View local 
+
+.Server with php
+----
+php -S 0.0.0.0:8080 -t ./docs
+----
+
+
+== Reference
+
+* https://ezgif.com/maker
+* 
