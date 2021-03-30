@@ -66,4 +66,14 @@ php -S 0.0.0.0:8080 -t ./docs
 == Reference
 
 * https://ezgif.com/maker
-* 
+* https://gpxstudio.github.io/
+* https://github.com/vcoppe/gpx-tool
+* https://raruto.github.io/leaflet-elevation/
+* http://utrack.crempa.net/
+* https://play.google.com/store/apps/details?id=net.osmtracker&hl=pt&gl=US
+* https://github.com/labexp/osmtracker-android
+* https://idecv-ingt.opendata.arcgis.com/
+* https://idecv.gov.cv/
+* https://ingt.gov.cv/site/Servi%C3%A7os/idecv/
+* https://ingt.maps.arcgis.com/apps/webappviewer/index.html?id=87f14e8118b04dc6bbd75385e2eeba92
+* https://ingt.maps.arcgis.com/home/item.html?id=0bbbb88b32154b92bf0ca205a90706fa 
