@@ -43,8 +43,8 @@
             width: 100%;
         }
 
-        #mapContainer { width: 100%; height:100%; position: fixed;}
-        #map { width: 100%; height:100%; position: relative;}
+        #map_container_div { width: 100%; height:100%; position: fixed;}
+        #map_div { width: 100%; height:100%; position: relative;}
 
         .chart {
             height: 400px;
@@ -95,27 +95,27 @@
     <hr>
      <!-- Tab links -->
     <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'detail')">Detail</button>
-        <button class="tablinks" onclick="openTab(event, 'mapContainer')">Map</button>
-        <button class="tablinks" onclick="openTab(event, 'altitude')">Altitude</button>
-        <button class="tablinks" onclick="openTab(event, 'groundSpeed')">Ground Speed</button>
+        <button class="tablinks" onclick="openTab(event, 'detail_div')">Details</button>
+        <button class="tablinks" onclick="openTab(event, 'map_container_div')">Map</button>
+        <button class="tablinks" onclick="openTab(event, 'dataset_altitude_div')">Altitude</button>
+        <button class="tablinks" onclick="openTab(event, 'dataset_speed_div')">Speed</button>
     </div>
 
-    <div id="detail" class="tabcontent">
+    <div id="detail_div" class="tabcontent">
         <h3 id="track-name"></h3>
-        <p>Total distance: <span id="totalDistance"></span> km (<span id="totalDistanceNM"></span> NM)</p>
+        <p>Total distance: <span id="totalDistance"></span> KM or <span id="totalDistanceNM"></span> NM </p>
         <p>GPX Download: <a id="gpxDownload"></a></p>
     </div>
 
 
-    <div id="mapContainer">
-        <div id="map"></div>
+    <div id="map_container_div">
+        <div id="map_div"></div>
     </div>
 
 
-    <div id="altitude" class="tabcontent chart" ></div>
+    <div id="dataset_altitude_div" class="tabcontent chart" ></div>
 
-    <div id="groundSpeed" class="tabcontent chart" ></div>
+    <div id="dataset_speed_div" class="tabcontent chart" ></div>
 
 
     <script src="js/lib/gpx-parser.js"></script>
@@ -132,8 +132,14 @@
     <script src="//code.jquery.com/jquery-latest.js"></script>
     <script src="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 
+
     <script>
-        let mymap = L.map('map');
+        //let i18n = ;
+        //Altitude no caminho = Altitude no caminho
+    </script>
+
+    <script>
+        let mymap = L.map('map_div');
 
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -224,7 +230,10 @@
 
                 document.getElementById("track-name").innerText = gpx.tracks[0].name;
 
+                //Distance in KM (Kilometer)
                 document.getElementById("totalDistance").innerText = (gpx.tracks[0].distance.total / 1000).toFixed(3);
+
+                //Distance in NM (Nautics Miles)
                 document.getElementById("totalDistanceNM").innerText = (gpx.tracks[0].distance.total / 1000 * 0.539956803).toFixed(3);
 
                 document.getElementById("gpxDownload").innerText = trackPath;
@@ -233,17 +242,17 @@
                 drawTrack(gpx.tracks[0]);
                 createLGFromWpt(gpx.waypoints, imagePath);
                 drawAltitudeChart(gpx.tracks[0]);
-                drawGroundSpeedChart(getGroundSpeedData(gpx.tracks[0]));
+                drawDataSpeedChart(getDataSpeed(gpx.tracks[0]));
             });
     </script>
 
     <script>
         /**
-         * Returns an array of time - ground speed for each track point (that has a time value).
+         * Returns an array of time - speed for each track point (that has a time value).
          *
          * @param track
          */
-        function getGroundSpeedData(track) {
+        function getDataSpeed(track) {
             let result = [];
 
             let gpx = new gpxParser();
@@ -261,12 +270,16 @@
 
                     if (time < 5) { continue; }
 
-                    // in nm (nautical miles)
-                    let distance = gpx.calcDistanceBetween(previousPoint, point) * (0.539957);
+                    // Distance: nm (nautical miles) - kn ou knot (nautical mile per hour) - Ground speed (kts)
+                    //let distance = gpx.calcDistanceBetween(previousPoint, point) * (0.539957);
 
-                    let speedInKmPerHour = ((distance / time) * 3600) / 1000;
+                    // Distance: KM (Kilometers) - Speed: kmh (Km per hour) 
+                    let distance = gpx.calcDistanceBetween(previousPoint, point);
 
-                    result.push([point.time.getTime(), speedInKmPerHour]);
+                    //Distance per hour
+                    let speed = ((distance / time) * 3600) / 1000;
+
+                    result.push([point.time.getTime(), speed]);
                 }
 
                 previousPoint = point;
@@ -277,15 +290,20 @@
 
         function drawAltitudeChart(track) {
 
-            let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele * 3.28084]);
+            // FT (Feet) Meter * 
+            //let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele * 3.28084]);
+
+            //
+            let dataPoints = track.points.filter(p => p.time !== null).map(p => [p.time, p.ele]);
+            let trackTitle = track.name;
 
             console.log(dataPoints);
-            Highcharts.chart('altitude', {
+            Highcharts.chart('dataset_altitude_div', {
                 chart: {
                     type: 'area'
                 },
                 title: {
-                    text: 'Altitude (ft)'
+                    text: 'Altitude chart'
                 },
                 subtitle: {
                     text: 'Altitude en route'
@@ -302,12 +320,12 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Altitude (ft)'
+                        text: 'Meter'
                     }
                 },
                 tooltip: {
-                    headerFormat: '<b>{series.name}</b><br>',
-                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} ft'
+                    headerFormat: '<b>{series.name}</b>: {point.y:.2f} m <br>',
+                    pointFormat: 'Time: {point.x:%e. %b %H:%M}'
                 },
 
                 plotOptions: {
@@ -321,7 +339,7 @@
                 colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
                 series: [{
-                    name: "Altitude (ft)",
+                    name: "Altitude",
                     data: dataPoints
                 }],
 
@@ -329,18 +347,18 @@
             });
         };
 
-        function drawGroundSpeedChart(dataPoints) {
+        function drawDataSpeedChart(dataPoints) {
             console.log(dataPoints);
 
-            Highcharts.chart('groundSpeed', {
+            Highcharts.chart('dataset_speed_div', {
                 chart: {
                     type: 'area'
                 },
                 title: {
-                    text: 'Ground speed (kts)'
+                    text: 'Speed chart'
                 },
                 subtitle: {
-                    text: 'Ground speed'
+                    text: 'Speed en route'
                 },
                 xAxis: {
                     type: 'datetime',
@@ -349,17 +367,17 @@
                         year: '%b'
                     },
                     title: {
-                        text: 'Date'
+                        text: 'Time'
                     }
                 },
                 yAxis: {
                     title: {
-                        text: 'Ground speed (kts)'
+                        text: 'Kilometre per hour'
                     }
                 },
                 tooltip: {
-                    headerFormat: '<b>{series.name}</b><br>',
-                    pointFormat: '{point.x:%e. %b %H:%M}: {point.y:.2f} kts'
+                    headerFormat: '<b>{series.name}</b>: {point.y:.2f} km/h<br>',
+                    pointFormat: 'Time: {point.x:%e. %b %H:%M}'
                 },
 
                 plotOptions: {
@@ -373,7 +391,7 @@
                 colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
                 series: [{
-                    name: "Ground speed (kts)",
+                    name: "Speed",
                     data: dataPoints
                 }],
 
