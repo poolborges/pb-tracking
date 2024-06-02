@@ -62,6 +62,9 @@ $ magick mogrify -resize 50% *
 php -S 0.0.0.0:8080 -t ./docs
 ----
 
+== Thanks
+
+* Tracker São Tome e Principe 2024/05/19, produced by Kevin
 
 == Reference
 
